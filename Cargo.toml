@@ -13,15 +13,15 @@ bimap = "0.6.2"
 rayon = "1.5.3"
 kdam = "0.2.7"
 duct = "0.13.5"
-# 
-# [lib]
-# name = "galib"
-# path = "src/lib.rs"
-# 
-# [[bin]]
-# name = "voice_lpf"
-# path = "tasks/voice_lpf/task.rs"
-# 
-# [[bin]]
-# name = "am_bpf"
-# path = "tasks/am_bpf/task.rs"
+
+[lib]
+name = "galib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "voice_lpf"
+path = "tasks/voice_lpf/task.rs"
+
+[[bin]]
+name = "am_bpf"
+path = "tasks/am_bpf/task.rs"

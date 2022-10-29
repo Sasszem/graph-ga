@@ -1,10 +1,9 @@
 use galib::ga::*;
 use galib::circuit::circuit::*;
 use galib::circuit::components::*;
+use galib::circuit::types::*;
 
 fn run_spice(ckt: &Circuit) -> Vec<(f64, f64)> {
-    use galib::circuit::types::{ComponentId};
-
     let conn = ckt.get_connections();
     let src = conn[&ComponentId{id: 1}];
     let dst = conn[&ComponentId{id: 3}];
@@ -68,10 +67,10 @@ fn mutate(ckt: &mut Circuit, gen: u32) {
 
 fn main() {
     let mut ckt = Circuit::new();
-    let input = CInputPort{ }.into();
-    let input_r = CFixedResistor{val: 50.0}.into();
-    let load_r = CFixedResistor{val: 50.0}.into();
-    let trans: Component = CResistor{val: 0.0}.into();
+    let input = InputPort{ }.into();
+    let input_r = FixedResistor{val: 50.0}.into();
+    let load_r = FixedResistor{val: 50.0}.into();
+    let trans: BoxedComponent = Resistor{val: 0.0}.into();
     let gnd = galib::circuit::types::CircuitNode { id: 0 };
     let u_int = ckt.new_node();
     ckt.mark_internal(u_int);
