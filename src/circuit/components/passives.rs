@@ -1,4 +1,4 @@
-use crate::network_raw::types::*;
+use crate::circuit::types::*;
 use super::{Component, format_si, random_value};
 
 #[derive(Debug, Copy, Clone)]

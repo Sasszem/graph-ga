@@ -1,6 +1,6 @@
 use rand::{seq::SliceRandom, thread_rng, Rng};
 
-use crate::network_raw::types::BoxedComponent;
+use crate::circuit::types::BoxedComponent;
 
 use super::{Component, Capacitor, Inductor, Resistor};
 

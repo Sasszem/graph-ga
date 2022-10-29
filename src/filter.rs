@@ -1,5 +1,5 @@
 use crate::ga::run_with_ngspice;
-use crate::network_raw::circuit::*;
+use crate::circuit::circuit::*;
 
 pub fn get_fitness(ckt: &Circuit) -> f64 {
 

@@ -1,9 +1,9 @@
 use std::{time::{Duration, Instant}, fs::File};
 use std::io::prelude::*;
-use crate::network_raw::{ga::*};
+use crate::circuit::{ga::*};
 use duct::cmd;
 use rayon::prelude::*;
-use crate::{network_raw::{circuit::Circuit}};
+use crate::{circuit::{circuit::Circuit}};
 use rand::{seq::SliceRandom, thread_rng};
 
 

@@ -1,10 +1,10 @@
 
 use ga::do_ga;
-use network_raw::{circuit::Circuit, components::*};
+use circuit::{*, components::*};
 
 
 // pub mod lib;
-mod network_raw;
+mod circuit;
 mod ga;
 mod filter;
 
@@ -15,7 +15,7 @@ fn main() {
     let input_r = Box::new(FixedResistor{val: 50.0});
     let load_r = Box::new(FixedResistor{val: 50.0});
     let trans = Box::new(Resistor{val: 0.0});
-    let gnd = network_raw::types::CircuitNode { id: 0 };
+    let gnd = circuit::types::CircuitNode { id: 0 };
     let u_int = ckt.new_node();
     ckt.mark_internal(u_int);
     let mid_gen = ckt.new_node();
@@ -26,7 +26,7 @@ fn main() {
     
     let mid_1 = ckt.new_node();
     let mid_2 = ckt.new_node();
-    let mid_3 = network_raw::types::CircuitNode { id: 100 };
+    let mid_3 = circuit::types::CircuitNode { id: 100 };
     ckt.mark_internal(mid_3);
 
     ckt.add_component(trans.clone(), mid_gen, mid_1);

@@ -1,6 +1,6 @@
 use rand::{thread_rng, Rng, seq::IteratorRandom};
 
-use crate::network_raw::types::ComponentDirection;
+use crate::circuit::types::ComponentDirection;
 
 use super::*;
 
@@ -43,12 +43,12 @@ pub fn crossover(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
     // we now have a group of nodes
     // now we only need to add the inner branches to the graphs
     // we have a few components & nodes now
-    let mut remove_from_first : Vec<crate::network_raw::types::ComponentId> = Vec::new();
+    let mut remove_from_first : Vec<crate::circuit::types::ComponentId> = Vec::new();
     for &node in mapping.left_values() {
         first.graph[&node].iter().filter(|(o_node, cid, dir)| matches!(dir, ComponentDirection::FORWARD) && mapping.contains_left(o_node) && !first.components[cid].is_fixed()).for_each(|(o_node, cid, _)| {first_parts.push((node, *o_node, first.components[cid].clone())); remove_from_first.push(*cid);});
         first.graph.entry(node).or_insert_with(|| Vec::new()).retain(|(node, cid, _)| !mapping.contains_left(node)  || first.components[cid].is_fixed());
     }
-    let mut remove_from_second : Vec<crate::network_raw::types::ComponentId> = Vec::new();
+    let mut remove_from_second : Vec<crate::circuit::types::ComponentId> = Vec::new();
     for &node in mapping.right_values() {
         second.graph[&node].iter().filter(|(o_node, cid, dir)| matches!(dir, ComponentDirection::FORWARD) && mapping.contains_right(o_node) && !second.components[cid].is_fixed()).for_each(|(o_node, cid, _)| {second_parts.push((node, *o_node, second.components[cid].clone())); remove_from_second.push(*cid);});
         second.graph.entry(node).or_insert_with(|| Vec::new()).retain(|(node, cid, _)| !mapping.contains_right(node) || second.components[cid].is_fixed());

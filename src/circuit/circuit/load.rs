@@ -1,5 +1,5 @@
 use regex::{Regex};
-use crate::network_raw::components::*;
+use crate::circuit::components::*;
 use super::*;
 
 impl Circuit {
