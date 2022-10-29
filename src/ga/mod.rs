@@ -166,31 +166,3 @@ pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit
     printf(&ckt);
     // println!("{}", ckt);
 }
-
-#[cfg(test)]
-mod test {
-    use crate::network_raw::load::load;
-
-    use super::run_with_ngspice;
-
-    #[test]
-    fn test() {
-        let ckt = load("   25 70 Inductor(12 u) # 160
-        25 0 LoadResistor(50) # 3
-        70 0 Capacitor(27.000000000000004 n) # 93
-        0 40 Inductor(55.99999999999999 n) # 107
-        2 0 Input() # 1
-        53 25 Capacitor(2 n) # 134
-        25 2 LoadResistor(50) # 2
-        25 37 Capacitor(16 n) # 88
-        53 70 Capacitor(2.2 n) # 156
-        25 40 Inductor(22 n) # 118
-        37 53 Inductor(999.9999999999999 n) # 127
-        37 40 Capacitor(8.2 u) # 97
-        ! 2 ");
-        let d = run_with_ngspice(&ckt, ".ac dec 10 1 100\n.print ac vm(100)");
-        for d in d {
-            println!("{:?}", d);
-        }
-    }
-}

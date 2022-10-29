@@ -45,34 +45,3 @@ pub fn print_result(ckt: &Circuit) {
     println!("end of circuit tf dump");
     println!("{}", ckt.to_string());
 }
-
-#[cfg(test)]
-mod test {
-    use crate::network_raw::load::{load};
-
-    use super::*;
-
-    const CKT : &str = "
-    2 1 Input(0) # 1
-    210 2 LoadResistor(50) # 2
-    210 1 LoadResistor(50) # 3
-    266 233 Capacitor(1.2 n) # 1695
-    266 290 Resistor(47) # 1692
-    233 278 Inductor(99.99999999999999 n) # 1673
-    278 266 Inductor(1.15 u) # 1691
-    1 210 Capacitor(389.99999999999994 n) # 1682
-    278 233 Inductor(1.2 u) # 1683
-    207 278 Capacitor(1.5 u) # 1681
-    1 207 Capacitor(3 u) # 1698
-    233 207 Resistor(22 k) # 1684
-    210 290 Inductor(18 m) # 1632
-    207 233 Capacitor(8.2 n) # 1477
-    ! 2
-    ";
-
-    #[test]
-    fn eval() {
-        let circuit = load(CKT);
-        print_result(&circuit);
-    }
-}
