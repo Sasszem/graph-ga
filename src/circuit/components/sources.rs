@@ -28,6 +28,12 @@ impl Component for VoltageSource {
     }
 }
 
+impl std::convert::Into<BoxedComponent> for VoltageSource {
+    fn into(self) -> BoxedComponent {
+        Box::new(self)
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
 pub struct InputPort {
 }
@@ -51,5 +57,11 @@ impl Component for InputPort {
         AllowedSeriesConnections::TOP
     }
     fn randomize_val(&mut self) {
+    }
+}
+
+impl std::convert::Into<BoxedComponent> for InputPort {
+    fn into(self) -> BoxedComponent {
+        Box::new(self)
     }
 }

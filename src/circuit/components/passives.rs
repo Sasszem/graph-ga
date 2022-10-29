@@ -27,6 +27,12 @@ impl Component for Resistor {
     }
 }
 
+impl std::convert::Into<BoxedComponent> for Resistor {
+    fn into(self) -> BoxedComponent {
+        Box::new(self)
+    }
+}
+
 
 
 
@@ -56,6 +62,11 @@ impl Component for Capacitor {
     }
 }
 
+impl std::convert::Into<BoxedComponent> for Capacitor {
+    fn into(self) -> BoxedComponent {
+        Box::new(self)
+    }
+}
 
 
 #[derive(Debug, Copy, Clone)]
@@ -112,6 +123,12 @@ impl Component for Wire {
     }
 }
 
+impl std::convert::Into<BoxedComponent> for Inductor {
+    fn into(self) -> BoxedComponent {
+        Box::new(self)
+    }
+}
+
 
 
 #[derive(Debug, Copy, Clone)]
@@ -143,5 +160,11 @@ impl Component for FixedResistor {
     }
     fn is_fixed(&self) -> bool {
         true
+    }
+}
+
+impl std::convert::Into<BoxedComponent> for FixedResistor {
+    fn into(self) -> BoxedComponent {
+        Box::new(self)
     }
 }
