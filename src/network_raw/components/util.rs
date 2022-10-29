@@ -86,42 +86,6 @@ pub fn random_value(min_exp: i32, max_exp: i32) -> f64 {
     mul * random_mantissa()
 }
 
-/**
- * Get base-10 mantissa of float
- */
-fn get_mantissa(f: f64) -> f64 {
-    let mut m = f.abs();
-    while m > 10.0 {
-        m /= 10.0
-    }
-    while m < 1.0 {
-        m *= 10.0
-    }
-    m
-}
-
-fn in_series(val: f64, series: &[f64]) -> bool {
-    let m = get_mantissa(val);
-    for k in series {
-        if (m-*k).abs() < 0.01 {
-            return true
-        }
-    }
-    false
-}
-fn is_e48(val: f64) -> bool {
-    in_series(val, &E48_SER)
-}
-
-fn is_e24(val: f64) -> bool {
-    in_series(val, &E24_SER)
-}
-
-fn is_e12(val: f64) -> bool {
-    in_series(val, &E12_SER)
-}
-
-
 pub fn random_component() -> BoxedComponent {
     let choice: i32 = thread_rng().gen_range(1..3);
     match choice {
@@ -144,45 +108,4 @@ pub fn parse_si(val: f64, unit: &str) -> f64 {
         _ => 1.0,
     };
     val * mul
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_si() {
-        for _ in 0..10 {
-            let k = random_value(-12, 9);
-            println!("{} = {}", k, format_si(k));
-        }
-    }
-
-    #[test]
-    fn test_inclusions() {
-        for i in E12_SER {
-            assert!(is_e12(i), "{i} is E12");
-        }
-        for i in E24_SER {
-            assert!(is_e24(i), "{i} is E24");
-        }
-        for i in E48_SER {
-            assert!(is_e48(i), "{i} is E48");
-        }
-    }
-   
-    #[test]
-    fn test_res() {
-        for i in 0..10 {
-            println!("Random resistor #{i}: {}", random_value(0, 2))
-        }
-    }
-
-    #[test]
-    fn test_random_val() {
-        for _i in 0..5 {
-            let c = random_component();
-            println!("Comp: {}", c)
-        }
-    }
 }

@@ -82,7 +82,7 @@ pub fn crossover(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
 pub fn crossover_2(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
     let (mut left, mut right) = (first.clone(), second.clone());
 
-    let num_comps = first.components.iter().filter(|(id, comp)| !comp.is_fixed()).count().min(second.components.iter().filter(|(id, comp)|!comp.is_fixed()).count());
+    let num_comps = first.components.iter().filter(|(_id, comp)| !comp.is_fixed()).count().min(second.components.iter().filter(|(_id, comp)|!comp.is_fixed()).count());
 
 
     let no_nodes = thread_rng().gen_range(2 .. num_comps.max(3));

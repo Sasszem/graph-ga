@@ -1,5 +1,4 @@
 use crate::ga::run_with_ngspice;
-use crate::network_raw::types::*;
 use crate::network_raw::circuit::*;
 
 pub fn get_fitness(ckt: &Circuit) -> f64 {
@@ -13,7 +12,7 @@ pub fn get_fitness(ckt: &Circuit) -> f64 {
     score += d.iter().map(|(f, r)| {
         let mag = 20.0*r.log10();
         if f > &4000.0 {
-            let d = (mag + 46.0);
+            let d = mag + 46.0;
             if d > 0.0 {
                 d*100.0
             }

@@ -1,6 +1,6 @@
 use std::{time::{Duration, Instant}, fs::File};
 use std::io::prelude::*;
-use crate::network_raw::{mutation::{CHOICES_MOD, CHOICES_SETTLE}, crossover::{crossover, crossover_2}};
+use crate::network_raw::{mutation::{CHOICES_MOD, CHOICES_SETTLE}, crossover::*};
 use duct::cmd;
 use rayon::prelude::*;
 use crate::{network_raw::{circuit::Circuit, mutation::*}};
@@ -138,8 +138,8 @@ pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit
         if best_in_gen.1 < best_ckt_so_far.1 {
             let mut ckt_checkpoint = File::create("checkpoint").unwrap();
             best_ckt_so_far = best_in_gen;
-            ckt_checkpoint.write(format!("----------------\nFitness: {}\n{}\n", best_ckt_so_far.1, best_ckt_so_far.0.as_spice().0).as_bytes());
-            ckt_checkpoint.flush();
+            ckt_checkpoint.write(format!("----------------\nFitness: {}\n{}\n", best_ckt_so_far.1, best_ckt_so_far.0.as_spice().0).as_bytes()).unwrap();
+            ckt_checkpoint.flush().unwrap();
             if best_ckt_so_far.1 < 1000.0 {
                 println!("Found best ckt");
                 break;
