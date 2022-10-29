@@ -68,11 +68,11 @@ fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, fitf: fn(&Circuit)->f64
     (out_pool, avg_fitness, min_fitness, t_mut, t_fit, t_cross, (m[0].0.clone(), m[0].1))
 }
 
-pub fn run_with_ngspice(ckt: &Circuit, commands: &str) -> Vec<(f64, f64)> {
+pub fn run_with_ngspice(ckt: &Circuit, gnd: CircuitNode, commands: &str) -> Vec<(f64, f64)> {
     let mut ckt = ckt.clone();
     mut_simplify(&mut ckt);
-    let (spice_desc, node) = ckt.as_spice();
-    let stdin = spice_desc + commands + &format!("\n.print ac vm({})\n", node.id);
+    let spice_desc = ckt.as_spice(gnd);
+    let stdin = spice_desc + commands;
     let mut res = Vec::new();
     let cmd_res = cmd!("ngspice", "-b").stdin_bytes(stdin).stderr_capture().stdout_capture().run();
     if let Ok(out) = cmd_res {
@@ -139,7 +139,7 @@ pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit
         if best_in_gen.1 < best_ckt_so_far.1 {
             let mut ckt_checkpoint = File::create("checkpoint").unwrap();
             best_ckt_so_far = best_in_gen;
-            ckt_checkpoint.write(format!("----------------\nFitness: {}\n{}\n", best_ckt_so_far.1, best_ckt_so_far.0.as_spice().0).as_bytes()).unwrap();
+            ckt_checkpoint.write(format!("----------------\nFitness: {}\n{}\n", best_ckt_so_far.1, best_ckt_so_far.0.as_spice(CircuitNode{id: 0})).as_bytes()).unwrap();
             ckt_checkpoint.flush().unwrap();
             if best_ckt_so_far.1 < 1000.0 {
                 println!("Found best ckt");
