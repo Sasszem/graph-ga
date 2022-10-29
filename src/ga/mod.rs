@@ -7,7 +7,7 @@ use crate::{circuit::{circuit::Circuit}};
 use rand::{seq::SliceRandom, thread_rng};
 
 
-fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, settle: bool, fitf: fn(&Circuit)->f64) -> (Vec<Circuit>, f64, f64, Duration, Duration, Duration, (Circuit, f64)) {
+fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, fitf: fn(&Circuit)->f64, mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit), gen: u32) -> (Vec<Circuit>, f64, f64, Duration, Duration, Duration, (Circuit, f64)) {
     let pool = pool;
     let t_fit = Instant::now();
     let mut m : Vec<_> = pool.par_iter().map(|x| (x, fitf(x))).filter(|(_, f)| f.is_normal()).collect();
@@ -40,9 +40,7 @@ fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, settle: bool, fitf: fn(
     let t_mut = Instant::now();
     for _ in 0..((size - out_pool.len()) / 2 ) {
         let mut ckt = filtered.choose_weighted(&mut thread_rng(), |item| item.1).unwrap().0.clone();
-        for _ in if settle {0..3} else {0..7} {
-            do_mutation_n_tries(&mut ckt, 10, if settle {&CHOICES_SETTLE} else {&CHOICES_MOD});
-        }
+        mutf(&mut ckt, gen);
         out_pool.push(ckt);
     }
     let t_mut = t_mut.elapsed();
@@ -55,7 +53,7 @@ fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, settle: bool, fitf: fn(
     while out_pool.len() < size {
         let first = filtered.choose_weighted(&mut thread_rng(), |item| item.1).unwrap();
         let second = filtered.choose_weighted(&mut thread_rng(), |item| item.1).unwrap();
-        let (f2, s2) = crossover_2(first.0, second.0);
+        let (f2, s2) = crossf(first.0, second.0);
         // replicate them 3 times
         for _ in 0..3 {
             out_pool.push(f2.clone());
@@ -97,7 +95,7 @@ pub fn run_with_ngspice(ckt: &Circuit, commands: &str) -> Vec<(f64, f64)> {
     return res;
 }
 
-pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit)->f64, printf: fn(&Circuit)) {
+pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit)->f64, printf: fn(&Circuit),mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit)) {
     let mut pool : Vec<Circuit> = Vec::new();
     for _ in 0..pool_size {
         let mut ckt_2 = base_ckt.clone();
@@ -126,7 +124,7 @@ pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit
                 println!("-----------------");
             }
         }
-        let (out_pool, avg_fitness, min_fitness, t_mut, t_fit, t_cross, best_in_gen) = mutate_and_crossover(pool, pool_size, i > 300, fitf);
+        let (out_pool, avg_fitness, min_fitness, t_mut, t_fit, t_cross, best_in_gen) = mutate_and_crossover(pool, pool_size, fitf, mutf, crossf, i+1);
         pool = out_pool;
         avg_t_mut += t_mut / n_gen;
         avg_t_fit += t_fit / n_gen;
