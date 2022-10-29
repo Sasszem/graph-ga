@@ -103,7 +103,7 @@ pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit
     for _ in 0..pool_size {
         let mut ckt_2 = base_ckt.clone();
         for _ in 0..500 {
-            do_mutation_n_tries(&mut ckt_2, 10, &CHOICES_MOD);
+            do_mutation_n_tries(&mut ckt_2, 10, &MUT_CHOICES_MOD);
         }
         mut_simplify(&mut ckt_2);
         pool.push(ckt_2);

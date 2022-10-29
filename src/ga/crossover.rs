@@ -4,7 +4,7 @@ use crate::circuit::types::ComponentDirection;
 
 use crate::circuit::{*, types::*};
 
-pub fn crossover(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
+pub fn crossover_subgraph_swap(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
     let (mut first, mut second) = (first.clone(), second.clone());
     
     let num_nodes = first.graph.keys().filter(|&x| !first.internal.contains(x)).count().min(second.graph.keys().filter(|&x| !second.internal.contains(x)).count());
@@ -79,7 +79,7 @@ pub fn crossover(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
     (first, second)
 }
 
-pub fn crossover_2(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
+pub fn crossover_random_swap(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
     let (mut left, mut right) = (first.clone(), second.clone());
 
     let num_comps = first.components.iter().filter(|(_id, comp)| !comp.is_fixed()).count().min(second.components.iter().filter(|(_id, comp)|!comp.is_fixed()).count());

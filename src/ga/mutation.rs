@@ -235,7 +235,7 @@ pub fn mut_simplify(ckt: &mut Circuit) -> bool {
     true
 }
 
-pub const CHOICES_MOD: [(fn(&mut Circuit)->bool, f64, &str); 6] = [
+pub const MUT_CHOICES_MOD: [(fn(&mut Circuit)->bool, f64, &str); 6] = [
     (mut_add_random_component_parallel, 0.2, "parallel"),
     (mut_add_random_component_series, 0.2, "series"),
     (mut_delete_component, 0.2, "delete"),
@@ -243,7 +243,7 @@ pub const CHOICES_MOD: [(fn(&mut Circuit)->bool, f64, &str); 6] = [
     (mut_replace_component, 0.3, "replace"),
     (mut_simplify, 0.1, "simpl")
 ];
-pub const CHOICES_SETTLE: [(fn(&mut Circuit)->bool, f64, &str); 4] = [
+pub const MUT_CHOICES_SETTLE: [(fn(&mut Circuit)->bool, f64, &str); 4] = [
     //(mut_add_random_component_parallel, 0.1, "parallel"),
     //(mut_add_random_component_series, 0.1, "series"),
     (mut_delete_component, 0.3, "delete"),
