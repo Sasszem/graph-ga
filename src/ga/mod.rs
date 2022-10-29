@@ -1,11 +1,14 @@
 use std::{time::{Duration, Instant}, fs::File};
 use std::io::prelude::*;
-use crate::circuit::{ga::*};
 use duct::cmd;
 use rayon::prelude::*;
 use crate::{circuit::{circuit::Circuit}};
 use rand::{seq::SliceRandom, thread_rng};
 
+mod mutation;
+mod crossover;
+pub use mutation::*;
+pub use crossover::*;
 
 fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, fitf: fn(&Circuit)->f64, mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit), gen: u32) -> (Vec<Circuit>, f64, f64, Duration, Duration, Duration, (Circuit, f64)) {
     let pool = pool;

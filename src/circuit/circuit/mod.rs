@@ -14,11 +14,11 @@ pub use components::*;
 
 #[derive(Clone)]
 pub struct Circuit {
-    pub(in super) components: ComponentsList,
-    pub(in super) graph: Graph,
-    pub(in super) next_node: usize,
-    pub(in super) next_component: usize,
-    pub(in super) internal: HashSet<CircuitNode>,
+    pub(in crate) components: ComponentsList,
+    pub(in crate) graph: Graph,
+    pub(in crate) next_node: usize,
+    pub(in crate) next_component: usize,
+    pub(in crate) internal: HashSet<CircuitNode>,
 }
 
 

@@ -2,8 +2,7 @@ use rand::{thread_rng, Rng, seq::IteratorRandom};
 
 use crate::circuit::types::ComponentDirection;
 
-use super::*;
-
+use crate::circuit::{*, types::*};
 
 pub fn crossover(first: &Circuit, second: &Circuit) -> (Circuit, Circuit) {
     let (mut first, mut second) = (first.clone(), second.clone());
