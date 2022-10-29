@@ -2,7 +2,8 @@ use rand::{thread_rng, seq::{IteratorRandom, SliceRandom}};
 
 use crate::network_raw::components::Wire;
 
-use super::{circuit::Circuit, components::random_component, types::CircuitNode};
+use super::*;
+use crate::network_raw::components::*;
 
 fn mut_add_random_component_parallel(ckt: &mut Circuit) -> bool {
     // chose 2 random nodes - must not be the same

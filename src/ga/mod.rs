@@ -1,9 +1,9 @@
 use std::{time::{Duration, Instant}, fs::File};
 use std::io::prelude::*;
-use crate::network_raw::{mutation::{CHOICES_MOD, CHOICES_SETTLE}, crossover::*};
+use crate::network_raw::{ga::*};
 use duct::cmd;
 use rayon::prelude::*;
-use crate::{network_raw::{circuit::Circuit, mutation::*}};
+use crate::{network_raw::{circuit::Circuit}};
 use rand::{seq::SliceRandom, thread_rng};
 
 
