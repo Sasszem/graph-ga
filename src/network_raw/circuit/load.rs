@@ -1,8 +1,6 @@
 use regex::{Regex};
-
-use crate::network_raw::components::{Inductor, VoltageSource, Resistor, Capacitor, parse_si};
-
-use super::{circuit::Circuit, components::*, types::*};
+use crate::network_raw::components::*;
+use super::*;
 
 impl Circuit {
   pub fn load(desc: &str) -> Circuit {

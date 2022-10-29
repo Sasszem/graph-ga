@@ -6,7 +6,6 @@ pub mod circuit;
 pub use circuit::Circuit;
 pub mod components;
 pub mod types;
-pub mod load;
 use types::*;
 pub mod ga {
     use super::*;
