@@ -2,7 +2,7 @@ use std::{time::{Duration, Instant}, fs::File};
 use std::io::prelude::*;
 use duct::cmd;
 use rayon::prelude::*;
-use crate::{circuit::{circuit::Circuit}};
+use crate::{circuit::{*, types::*}};
 use rand::{seq::SliceRandom, thread_rng};
 
 mod mutation;
@@ -98,7 +98,7 @@ pub fn run_with_ngspice(ckt: &Circuit, gnd: CircuitNode, commands: &str) -> Vec<
     return res;
 }
 
-pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit)->f64, printf: fn(&Circuit),mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit)) {
+pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit)->f64, printf: fn(&Circuit),mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit), stats_file_name: &str, checkpoint_file_name: &str) {
     let mut pool : Vec<Circuit> = Vec::new();
     for _ in 0..pool_size {
         let mut ckt_2 = base_ckt.clone();
@@ -117,7 +117,7 @@ pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit
     pb.set_postfix(format!("str={}, lst={:?}", "h", [1, 2]));
     kdam::BarExt::refresh(&mut pb);
 
-    let mut file = File::create("fitness_gen.csv").unwrap();
+    let mut file = File::create(stats_file_name).unwrap();
     for i in 0..n_gen {
         if i%50 == 0 {
             println!("At gen {i}");
@@ -137,7 +137,7 @@ pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit
         kdam::BarExt::update(&mut pb, 1);
         
         if best_in_gen.1 < best_ckt_so_far.1 {
-            let mut ckt_checkpoint = File::create("checkpoint").unwrap();
+            let mut ckt_checkpoint = File::create(checkpoint_file_name).unwrap();
             best_ckt_so_far = best_in_gen;
             ckt_checkpoint.write(format!("----------------\nFitness: {}\n{}\n", best_ckt_so_far.1, best_ckt_so_far.0.as_spice(CircuitNode{id: 0})).as_bytes()).unwrap();
             ckt_checkpoint.flush().unwrap();
