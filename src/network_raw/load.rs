@@ -38,7 +38,7 @@ impl Circuit {
           "Capacitor" => Some(Box::new(Capacitor {val})),
           "Inductor" => Some(Box::new(Inductor {val})),
           "Voltage" => Some(Box::new(VoltageSource {val})),
-          "LoadResistor" => Some(Box::new(LoadResistor{val})),
+          "FixedResistor" => Some(Box::new(FixedResistor{val})),
           "Wire" => Some(Box::new(Wire{})),
           "Input" => Some(Box::new(InputPort{})),
           _ => None,

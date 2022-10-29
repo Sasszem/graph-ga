@@ -111,3 +111,37 @@ impl Component for Wire {
         true
     }
 }
+
+
+
+#[derive(Debug, Copy, Clone)]
+pub struct FixedResistor {
+    pub val: f64,
+}
+
+impl std::fmt::Display for FixedResistor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "FixedResistor({})", format_si(self.val))
+    }
+}
+
+impl Component for FixedResistor {
+    fn as_spice(&self, id: ComponentId, top: CircuitNode, bot: CircuitNode) -> String {
+        format!("R_{} {} {} {}", id.id, top.id, bot.id, self.val)
+    }
+    fn get_random() -> Box<Self> where Self: Sized {
+        Box::new(FixedResistor{val: Self::random_val()})
+    }
+    fn random_val() -> f64 where Self: Sized {
+        50.0
+    }
+    fn randomize_val(&mut self) {
+        self.val = Self::random_val();
+    }
+    fn get_allowed_connections(&self) -> AllowedSeriesConnections {
+        AllowedSeriesConnections::NONE
+    }
+    fn is_fixed(&self) -> bool {
+        true
+    }
+}

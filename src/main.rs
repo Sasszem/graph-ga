@@ -12,8 +12,8 @@ mod filter;
 fn main() {
     let mut ckt = Circuit::new();
     let input = Box::new(InputPort{ });
-    let input_r = Box::new(LoadResistor{val: 50.0});
-    let load_r = Box::new(LoadResistor{val: 50.0});
+    let input_r = Box::new(FixedResistor{val: 50.0});
+    let load_r = Box::new(FixedResistor{val: 50.0});
     let trans = Box::new(Resistor{val: 0.0});
     let gnd = network_raw::types::CircuitNode { id: 0 };
     let u_int = ckt.new_node();
