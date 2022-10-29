@@ -1,0 +1,27 @@
+[package]
+name = "graph-ga"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dyn-clone = "1.0.9"
+rand = "0.8.4"
+regex = "1.6.0"
+bimap = "0.6.2"
+rayon = "1.5.3"
+kdam = "0.2.7"
+duct = "0.13.5"
+# 
+# [lib]
+# name = "galib"
+# path = "src/lib.rs"
+# 
+# [[bin]]
+# name = "voice_lpf"
+# path = "tasks/voice_lpf/task.rs"
+# 
+# [[bin]]
+# name = "am_bpf"
+# path = "tasks/am_bpf/task.rs"
