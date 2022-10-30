@@ -59,7 +59,7 @@ pub fn print_result(ckt: &Circuit) {
 }
 
 fn mutate(ckt: &mut Circuit, gen: u32) {
-    let settle = gen > 350;
+    let settle = gen > 300;
     for _ in if settle {0..3} else {0..7} {
         do_mutation_n_tries(ckt, 10, if settle {&MUT_CHOICES_SETTLE} else {&MUT_CHOICES_MOD});
     }
