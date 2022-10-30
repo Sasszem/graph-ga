@@ -50,6 +50,15 @@ pub enum ComponentDirection {
     BACKWARD
 }
 
+impl ComponentDirection {
+    pub fn reverse(&self) -> Self {
+        match self {
+            Self::FORWARD => Self::BACKWARD,
+            Self::BACKWARD => Self::FORWARD,
+        }
+    }
+}
+
 pub type ComponentsList = HashMap<ComponentId, BoxedComponent>;
 pub type Graph = HashMap<CircuitNode, Vec<(CircuitNode, ComponentId, ComponentDirection)>>;
 pub type BoxedComponent = Box<dyn super::components::Component + Send + Sync>;

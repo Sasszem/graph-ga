@@ -1,5 +1,5 @@
 use crate::circuit::types::*;
-use super::{Component, format_si, random_value};
+use super::{Component, format_si, random_value, closest_e48};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Resistor {
@@ -24,6 +24,25 @@ impl Component for Resistor {
     }
     fn randomize_val(&mut self) {
         self.val = Self::random_val();
+    }
+    fn get_resistor(&self) -> Option<&Resistor> {
+        Some(self)
+    } 
+    fn add_series(&mut self, other: &BoxedComponent) -> bool {
+        if let Some(other) = other.get_resistor() {
+            self.val = closest_e48(self.val + other.val);
+            true
+        } else {
+            false
+        }
+    }
+    fn add_parallel(&mut self, other: &BoxedComponent) -> bool {
+        if let Some(other) = other.get_resistor() {
+            self.val = closest_e48((self.val.recip() + other.val.recip()).recip());
+            true
+        } else {
+            false
+        }
     }
 }
 
@@ -60,6 +79,25 @@ impl Component for Capacitor {
     fn randomize_val(&mut self) {
         self.val = Self::random_val();
     }
+    fn get_capacitor(&self) -> Option<&Capacitor> {
+        Some(self)
+    }
+    fn add_series(&mut self, other: &BoxedComponent) -> bool {
+        if let Some(other) = other.get_capacitor() {
+            self.val = closest_e48((self.val.recip() + other.val.recip()).recip());
+            true
+        } else {
+            false
+        }
+    }
+    fn add_parallel(&mut self, other: &BoxedComponent) -> bool {
+        if let Some(other) = other.get_capacitor() {
+            self.val = closest_e48(self.val + other.val);
+            true
+        } else {
+            false
+        }
+    }
 }
 
 impl std::convert::Into<BoxedComponent> for Capacitor {
@@ -92,6 +130,25 @@ impl Component for Inductor {
     }
     fn randomize_val(&mut self) {
         self.val = Self::random_val();
+    }
+    fn get_inductor(&self) -> Option<&Inductor> {
+        Some(self)
+    }
+    fn add_series(&mut self, other: &BoxedComponent) -> bool {
+        if let Some(other) = other.get_inductor() {
+            self.val = closest_e48(self.val + other.val);
+            true
+        } else {
+            false
+        }
+    }
+    fn add_parallel(&mut self, other: &BoxedComponent) -> bool {
+        if let Some(other) = other.get_inductor() {
+            self.val = closest_e48((self.val.recip() + other.val.recip()).recip());
+            true
+        } else {
+            false
+        }
     }
 }
 

@@ -227,11 +227,78 @@ mod simpl {
         true
     }
 
+    pub fn simpl_series(ckt: &mut Circuit) -> bool {
+        // iterate over each node
+        let keys : Vec<CircuitNode> = ckt.graph.keys().cloned().collect();
+        for k in keys.iter() {
+            if ckt.internal.contains(k) || !ckt.graph.contains_key(k) {
+                continue;
+            }
+
+            if ckt.graph[k].len() == 2 && !ckt.graph[k].iter().any(|(_n, c, _d)| ckt.components[c].is_fixed()) {
+                // we might have a winner!
+                let first_id = ckt.graph[k][0].1;
+                let second_id = ckt.graph[k][1].1;
+                let first_dir = ckt.graph[k][0].2;
+                let second = ckt.components.get(&second_id).unwrap().clone();
+                let first = ckt.components.get_mut(&first_id).unwrap();
+                let top = ckt.graph[k][0].0;
+                let bottom = ckt.graph[k][1].0;
+                if top.id==bottom.id {
+                    continue;
+                }
+
+                if first.add_series(&second) {
+                    // added it in series - we now need to remove the second & remove the node
+
+
+                    // delete node
+                    ckt.graph.remove(k);
+                    // remove second component from connections
+                    ckt.graph.get_mut(&bottom).unwrap().retain(|(_n, cid, _d)| cid != &second_id);
+                    ckt.components.remove(&second_id);
+                    
+                    ckt.graph.get_mut(&top).unwrap().iter_mut().for_each(|mut p| {if p.1 == first_id {p.0.id = bottom.id}});
+                    ckt.graph.get_mut(&bottom).unwrap().push((top, first_id, first_dir));
+                }
+            }
+        }
+
+        return true;
+    }
+
+    pub fn simpl_parallel(ckt: &mut Circuit) -> bool {
+        // iterate over each node
+        let conn = ckt.get_connections();
+        for (c, (top, bottom)) in conn {
+            if !ckt.components.contains_key(&c) || ckt.components[&c].is_fixed() {
+                continue;
+            }
+            // iterate over possible parallel components
+            let poss_parallels = ckt.graph[&top].clone();
+            for (ed, cid, _dir) in poss_parallels {
+                if ed.id != bottom.id || cid.id == c.id {
+                    continue;
+                }
+                let other = ckt.components.get(&cid).unwrap().clone();
+                if ckt.components.get_mut(&c).unwrap().add_parallel(&other) {
+                    // combined parallel - now need to remobe the other one
+                    ckt.components.remove(&cid);
+                    ckt.graph.get_mut(&top).unwrap().retain(|e| e.1.id != cid.id);
+                    ckt.graph.get_mut(&bottom).unwrap().retain(|e| e.1.id != cid.id);
+                }
+            }
+        }
+
+        return true;
+    }
 }
 
 pub fn mut_simplify(ckt: &mut Circuit) -> bool {
     simpl::simpl_remove(ckt);
     simpl::simpl_wire_combine(ckt);
+    simpl::simpl_parallel(ckt);
+    simpl::simpl_series(ckt);
     true
 }
 
@@ -241,7 +308,7 @@ pub const MUT_CHOICES_MOD: [(fn(&mut Circuit)->bool, f64, &str); 6] = [
     (mut_delete_component, 0.2, "delete"),
     (mut_modify_component, 0.8, "modify"),
     (mut_replace_component, 0.3, "replace"),
-    (mut_simplify, 0.1, "simpl")
+    (mut_simplify, 0.00004, "simpl")
 ];
 pub const MUT_CHOICES_SETTLE: [(fn(&mut Circuit)->bool, f64, &str); 4] = [
     //(mut_add_random_component_parallel, 0.1, "parallel"),

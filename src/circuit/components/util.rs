@@ -96,6 +96,13 @@ pub fn random_component() -> BoxedComponent {
     }
 }
 
+pub fn closest_e48(val: f64) -> f64 {
+    let exp = val.log10();
+    let exp = exp.floor() as i32;
+    let v = val / 10.0_f64.powi(exp);
+    return E48_SER.iter().map(|f| (*f, (f-v).abs())).fold((1.0, (1.0-v).abs()), |a, b| if a.1<b.1 {a} else {b}).0 * 10.0_f64.powi(exp);
+}
+
 pub fn parse_si(val: f64, unit: &str) -> f64 {
     let mul = match unit {
         "m" => 1.0e-3,

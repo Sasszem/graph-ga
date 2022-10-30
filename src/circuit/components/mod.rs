@@ -17,6 +17,21 @@ pub trait Component : std::fmt::Display + DynClone{
     fn get_random() -> Box<Self> where Self: Sized;
     fn randomize_val(&mut self);
     fn as_spice(&self, id: ComponentId, top: CircuitNode, bot: CircuitNode) -> String;
+    fn get_inductor(&self) -> Option<&Inductor> {
+        None
+    }
+    fn get_resistor(&self) -> Option<&Resistor> {
+        None
+    }
+    fn get_capacitor(&self) -> Option<&Capacitor> {
+        None
+    }
+    fn add_series(&mut self, other: &BoxedComponent) -> bool {
+        false
+    }
+    fn add_parallel(&mut self, other: &BoxedComponent) -> bool {
+        false
+    }
 }
 dyn_clone::clone_trait_object!(Component);
 
