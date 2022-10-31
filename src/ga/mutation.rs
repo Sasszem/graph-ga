@@ -2,7 +2,7 @@ use rand::{thread_rng, seq::{IteratorRandom, SliceRandom}};
 
 use crate::circuit::{*, components::*, types::*};
 
-fn mut_add_random_component_parallel(ckt: &mut Circuit) -> bool {
+pub fn mut_add_random_component_parallel(ckt: &mut Circuit) -> bool {
     // chose 2 random nodes - must not be the same
     if let (Some(top), Some(bottom)) = (ckt.get_random_node(), ckt.get_random_node()) {
         // let pair: Vec<_> = ckt.graph.keys().choose_multiple(&mut thread_rng(), 2).into_iter().map(|x| *x).collect();
@@ -21,7 +21,7 @@ fn mut_add_random_component_parallel(ckt: &mut Circuit) -> bool {
     }
 }
 
-fn mut_add_random_component_series(ckt: &mut Circuit) -> bool {
+pub fn mut_add_random_component_series(ckt: &mut Circuit) -> bool {
     // choose random component in graph
     if let Some(comp) = ckt.components.keys().choose(&mut thread_rng()) {
         let comp = *comp;
@@ -50,7 +50,7 @@ fn mut_add_random_component_series(ckt: &mut Circuit) -> bool {
     }
 }
 
-fn mut_replace_component(ckt: &mut Circuit) -> bool {
+pub fn mut_replace_component(ckt: &mut Circuit) -> bool {
     if let Some(&to_replace) = ckt.components.keys().choose(&mut thread_rng()) {
         if ckt.components.get(&to_replace).unwrap().is_fixed() {
             return false;
@@ -64,7 +64,7 @@ fn mut_replace_component(ckt: &mut Circuit) -> bool {
     }
 }
 
-fn mut_delete_component(ckt: &mut Circuit) -> bool {
+pub fn mut_delete_component(ckt: &mut Circuit) -> bool {
     if let Some(&to_replace) = ckt.components.keys().choose(&mut thread_rng()) {
 
         if ckt.components.get(&to_replace).unwrap().is_fixed() {
@@ -91,7 +91,7 @@ fn mut_delete_component(ckt: &mut Circuit) -> bool {
     }
 }
 
-fn mut_modify_component(ckt: &mut Circuit) -> bool {
+pub fn mut_modify_component(ckt: &mut Circuit) -> bool {
     if let Some(&to_modify) = ckt.components.keys().choose(&mut thread_rng()) {
         if ckt.components.get(&to_modify).unwrap().is_fixed() {
             return false;
@@ -302,13 +302,19 @@ pub fn mut_simplify(ckt: &mut Circuit) -> bool {
     true
 }
 
+pub fn mut_simplify_restricted(ckt: &mut Circuit) -> bool {
+    simpl::simpl_remove(ckt);
+    simpl::simpl_wire_combine(ckt);
+    true
+}
+
 pub const MUT_CHOICES_MOD: [(fn(&mut Circuit)->bool, f64, &str); 6] = [
     (mut_add_random_component_parallel, 0.2, "parallel"),
     (mut_add_random_component_series, 0.2, "series"),
     (mut_delete_component, 0.2, "delete"),
     (mut_modify_component, 0.8, "modify"),
     (mut_replace_component, 0.3, "replace"),
-    (mut_simplify, 0.00004, "simpl")
+    (mut_simplify_restricted, 0.1, "simpl_restr")
 ];
 pub const MUT_CHOICES_SETTLE: [(fn(&mut Circuit)->bool, f64, &str); 4] = [
     //(mut_add_random_component_parallel, 0.1, "parallel"),

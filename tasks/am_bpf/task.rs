@@ -11,7 +11,7 @@ fn run_spice(ckt: &Circuit) -> Vec<(f64, f64)> {
     let node = if dst.1 == src.0 || dst.1 == src.1 {dst.0 } else {dst.1};
     let gnd = if src.0 == dst.0 || src.0 == dst.1 {src.0} else {src.1};
     
-    run_with_ngspice(&ckt, gnd, &format!(".ac dec 100 50000 5000000\n.print ac vm({})\n", node.id))
+    run_with_ngspice(&ckt, gnd, &format!(".ac dec 150 50000 5000000\n.print ac vm({})\n", node.id))
 }
 
 pub fn get_fitness(ckt: &Circuit) -> f64 {
@@ -26,7 +26,7 @@ pub fn get_fitness(ckt: &Circuit) -> f64 {
         if f < &450000.0 || &1700000.0 < f{
             let d = mag + 46.0;
             if d > 0.0 {
-                d*100.0
+                d* 750.0
             }
             else {
                 0.0
@@ -40,6 +40,10 @@ pub fn get_fitness(ckt: &Circuit) -> f64 {
             }
         } else {0.0}
     }).sum::<f64>();
+
+    let (num_c, num_l) = ckt.count_dynamic();
+    let unbalance = num_c.max(num_l) - num_c.min(num_l);
+    score += (unbalance as f64) * 800.0;
 
     score += (ckt.component_count() as f64) * 200.0;
     return score.abs() + 1.0;
