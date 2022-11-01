@@ -26,10 +26,10 @@ pub trait Component : std::fmt::Display + DynClone{
     fn get_capacitor(&self) -> Option<&Capacitor> {
         None
     }
-    fn add_series(&mut self, other: &BoxedComponent) -> bool {
+    fn add_series(&mut self, _other: &BoxedComponent) -> bool {
         false
     }
-    fn add_parallel(&mut self, other: &BoxedComponent) -> bool {
+    fn add_parallel(&mut self, _other: &BoxedComponent) -> bool {
         false
     }
 }
