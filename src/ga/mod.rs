@@ -10,14 +10,14 @@ mod crossover;
 pub use mutation::*;
 pub use crossover::*;
 
-fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, fitf: fn(&Circuit)->f64, mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit), gen: u32) -> (Vec<Circuit>, f64, f64, Duration, Duration, Duration, (Circuit, f64)) {
+fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, fitf: fn(&Circuit, u32)->f64, mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit), gen: u32) -> (Vec<Circuit>, f64, f64, Duration, Duration, Duration, (Circuit, f64)) {
     let pool = pool;
     let t_fit = Instant::now();
-    let mut m : Vec<_> = pool.par_iter().map(|x| (x, fitf(x))).filter(|(_, f)| f.is_normal()).collect();
+    let mut m : Vec<_> = pool.par_iter().map(|x| (x, fitf(x, gen))).filter(|(_, f)| f.is_normal()).collect();
     
     if m.len() < 20 {
         println!("Too few elements - had {} items to begin with", pool.len());
-        pool.par_iter().map(|x| (x, fitf(x))).for_each(
+        pool.par_iter().map(|x| (x, fitf(x, gen))).for_each(
             |x| println!("has fitness: {}", x.1)
         );
         assert!(false);
@@ -98,7 +98,7 @@ pub fn run_with_ngspice(ckt: &Circuit, gnd: CircuitNode, commands: &str) -> Vec<
     return res;
 }
 
-pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit)->f64, printf: fn(&Circuit),mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit), stats_file_name: &str, checkpoint_file_name: &str) {
+pub fn do_ga(base_ckt: &Circuit, n_gen: u32, pool_size: usize, fitf: fn(&Circuit, u32)->f64, printf: fn(&Circuit),mutf: fn(&mut Circuit, u32), crossf: fn(&Circuit, &Circuit)->(Circuit, Circuit), stats_file_name: &str, checkpoint_file_name: &str) {
     let mut pool : Vec<Circuit> = Vec::new();
     for _ in 0..pool_size {
         let mut ckt_2 = base_ckt.clone();

@@ -11,10 +11,10 @@ fn run_spice(ckt: &Circuit) -> Vec<(f64, f64)> {
     let node = if dst.1 == src.0 || dst.1 == src.1 {dst.0 } else {dst.1};
     let gnd = if src.0 == dst.0 || src.0 == dst.1 {src.0} else {src.1};
     
-    run_with_ngspice(&ckt, gnd, &format!(".ac dec 100 20 20000\n.print ac vm({})\n", node.id))
+    run_with_ngspice(&ckt, gnd, &format!(".ac dec 100 20 35000\n.print ac vm({})\n", node.id))
 }
 
-pub fn get_fitness(ckt: &Circuit) -> f64 {
+pub fn get_fitness(ckt: &Circuit, gen: u32) -> f64 {
     let d = run_spice(ckt);
 
     if d.len() < 5 {
@@ -40,8 +40,8 @@ pub fn get_fitness(ckt: &Circuit) -> f64 {
             }
         } else {0.0}
     }).sum::<f64>();
-
-    score += (ckt.component_count() as f64) * 200.0;
+    let settle = gen > 400;
+    score += (ckt.component_count() as f64) * (if settle {400.0} else {100.0});
     return score.abs() + 1.0;
 }
 
@@ -58,10 +58,18 @@ pub fn print_result(ckt: &Circuit) {
     println!("{}", ckt.to_string());
 }
 
+const MUT_CHOICES_CUSTOM_SETTLE: [(fn(&mut Circuit)->bool, f64, &str); 5] = [
+    (mut_delete_component, 0.3, "delete"),
+    (mut_modify_component, 0.8, "modify"),
+    (mut_replace_component, 0.4, "replace"),
+    (mut_simplify_restricted, 0.1, "simpl_restr"),
+    (mut_simplify, 0.001, "simpl"),
+];
+
 fn mutate(ckt: &mut Circuit, gen: u32) {
-    let settle = gen > 300;
-    for _ in if settle {0..3} else {0..7} {
-        do_mutation_n_tries(ckt, 10, if settle {&MUT_CHOICES_SETTLE} else {&MUT_CHOICES_MOD});
+    let settle = gen > 400;
+    for _ in if settle {0..2} else {0..5} {
+        do_mutation_n_tries(ckt, 15, if settle {&MUT_CHOICES_CUSTOM_SETTLE} else {&MUT_CHOICES_MOD});
     }
 }
 
@@ -90,5 +98,5 @@ fn main() {
     ckt.add_component(trans.clone(), mid_2, mid_3);
     ckt.add_component(trans, mid_3, mid_out);
     
-    galib::ga::do_ga(&ckt, 500, 1000, get_fitness, print_result, mutate, galib::ga::crossover_random_swap, "voice_lpf_fitness.csv", "voice_lpf_checkpoint.csv");
+    galib::ga::do_ga(&ckt, 600, 1000, get_fitness, print_result, mutate, galib::ga::crossover_random_swap, "voice_lpf_fitness.csv", "voice_lpf_checkpoint.csv");
 }
