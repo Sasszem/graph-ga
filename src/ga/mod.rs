@@ -70,7 +70,7 @@ fn mutate_and_crossover(pool: Vec<Circuit>, size: usize, fitf: fn(&Circuit, u32)
 
 pub fn run_with_ngspice(ckt: &Circuit, gnd: CircuitNode, commands: &str) -> Vec<(f64, f64)> {
     let mut ckt = ckt.clone();
-    mut_simplify(&mut ckt);
+    mut_simplify_restricted(&mut ckt);
     let spice_desc = ckt.as_spice(gnd);
     let stdin = spice_desc + commands;
     let mut res = Vec::new();
